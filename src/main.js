@@ -1,9 +1,6 @@
-const WIDTH = 500;
-const HEIGHT = 500;
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const image = new Image();
-image.src = "images/BlondeOnBlonde.jpg";
 
 
 class AsciiCell {
@@ -60,7 +57,6 @@ class AsciiManager {
         }
       }
     }
-    console.log(this.#imageCellArr);
   }
 
   #drawAscii() {
@@ -76,6 +72,33 @@ class AsciiManager {
   }
 }
 
+
+function loadFile(filePath) {
+  var result = null;
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("GET", filePath, false);
+  xmlhttp.send();
+  if (xmlhttp.status==200) {
+    result = xmlhttp.responseText;
+  }
+  return result;
+}
+
+
+function parseImageArray(text) {
+  const fileArr = text.match(/\w+.jpg/g);
+  // Convert arr to set and back to remove duplicates
+  const set = new Set(fileArr);
+  const returnArr = [...set];
+  return returnArr;
+}
+
+
+const fileStr = loadFile("images/");
+const imageStrArr = parseImageArray(fileStr);
+const randomImage = imageStrArr[Math.floor(Math.random() * imageStrArr.length)];
+console.log(randomImage);
+image.src = "images/" + randomImage;
 
 let manager;
 image.onload = function init() {
