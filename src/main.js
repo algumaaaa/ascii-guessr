@@ -43,10 +43,12 @@ class AsciiManager {
     this.#imageCellArr = [];
     for (let y = 0; y < this.#imageDataArr.height; y += resolution) {
       for (let x = 0; x < this.#imageDataArr.width; x += resolution) {
-        const coordX = x * 4; // imageData pixel arr is rbga, so every 4 items is a pixel
+        // imageData pixel arr is rbga, so every 4 items is a pixel
+        const coordX = x * 4; 
         const coordY = y * 4;
         const coord = (coordY * this.#imageDataArr.width) + coordX;
-        if (this.#imageDataArr.data[coord + 3] > 64) { // If alpha value is > 64
+        // If alpha value is > 64
+        if (this.#imageDataArr.data[coord + 3] > 64) { 
           const valueR = this.#imageDataArr.data[coord];
           const valueG = this.#imageDataArr.data[coord + 1];
           const valueB = this.#imageDataArr.data[coord + 2];
@@ -94,16 +96,42 @@ function parseImageArray(text) {
 }
 
 
+function capitalize(str) {
+  let returnStr = str.replace(/([A-Z])/g, ' $1').trim();
+  let len = returnStr.length;
+  returnStr = returnStr.slice(0, len-4);
+  return returnStr;
+}
+
+
 const fileStr = loadFile("images/");
 const imageStrArr = parseImageArray(fileStr);
 const randomImage = imageStrArr[Math.floor(Math.random() * imageStrArr.length)];
 console.log(randomImage);
 image.src = "images/" + randomImage;
+let answer = capitalize(randomImage);
+console.log(answer);
 
+const RESOLUTIONS = [ 30, 25, 20, 15, 10 ];
+let currResolution = 0;
 let manager;
 image.onload = function init() {
   canvas.width = image.width;
   canvas.height = image.height;
   manager = new AsciiManager(ctx, image.width, image.height);
-  manager.draw(10);
+  manager.draw(RESOLUTIONS[currResolution]);
 }
+
+const form = document.querySelector('form');
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const formData = new FormData(event.target);
+  const userInput = formData.get('input');
+  if (userInput == answer) {
+    console.log('yes!');
+  }
+  else {
+    currResolution += 1;
+    manager.draw(RESOLUTIONS[currResolution]);
+  }
+});
