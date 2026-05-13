@@ -120,12 +120,21 @@ function updateProgressLabel(currState, attempt) {
   for (let i = 0; i < maxAttempts; ++i) {
     if (i < attempt) output += "🟨";
     else if (currState == State.CORRECT && !marked) { output += "🟩"; marked = true; }
-    else if (marked == true) output += "⬛";
+    else output += "⬛";
 }
   if (currState == State.FAILED) {
     output = "🟨🟨🟨🟨🟥";
   }
   progressLabel.textContent = output;
+}
+
+
+function updateAnswerLabel(currState, answer) {
+  const answerLabel = document.getElementById("answerLabel");
+  let output = "";
+  if (currState == State.CORRECT) output = "Correct! The answer was " + answer;
+  else if (currState == State.FAILED) output = "Sorry! But the answer was " + answer;
+  answerLabel.textContent = output;
 }
 
 
@@ -158,6 +167,7 @@ form.addEventListener('submit', (event) => {
   if (userInput == answer) {
     manager.draw(RESOLUTIONS[RESOLUTIONS.length-1]);
     updateProgressLabel(State.CORRECT, currResolution);
+    updateAnswerLabel(State.CORRECT, answer);
   }
   else if (currResolution < RESOLUTIONS.length-1) {
     currResolution += 1;
@@ -166,5 +176,6 @@ form.addEventListener('submit', (event) => {
   }
   else {
     updateProgressLabel(State.FAILED, currResolution);
+    updateAnswerLabel(State.FAILED, answer);
   }
 });
