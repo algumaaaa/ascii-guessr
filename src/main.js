@@ -99,6 +99,7 @@ function parseImageArray(text) {
 function capitalize(str) {
   let returnStr = str.replace(/([A-Z])/g, ' $1').trim();
   let len = returnStr.length;
+  // Remove file type from str. Should move this elsewhere
   returnStr = returnStr.slice(0, len-4);
   return returnStr;
 }
@@ -127,11 +128,16 @@ form.addEventListener('submit', (event) => {
   event.preventDefault();
   const formData = new FormData(event.target);
   const userInput = formData.get('input');
+  event.target.reset();
   if (userInput == answer) {
-    console.log('yes!');
+    manager.draw(RESOLUTIONS[RESOLUTIONS.length-1]);
+      console.log('yes!');
   }
-  else {
+  else if (currResolution < RESOLUTIONS.length-1) {
     currResolution += 1;
     manager.draw(RESOLUTIONS[currResolution]);
+  }
+  else {
+    // fail state
   }
 });
