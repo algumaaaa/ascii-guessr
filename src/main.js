@@ -105,6 +105,30 @@ function capitalize(str) {
 }
 
 
+const State = {
+  FAILED: 0,
+  WRONG: 1,
+  CORRECT: 2
+}
+
+//🟥🟩🟨⬛
+function updateProgressLabel(currState, attempt) {
+  const maxAttempts = 5;
+  const progressLabel = document.getElementById("progressLabel");
+  let output = "";
+  let marked = false;
+  for (let i = 0; i < maxAttempts; ++i) {
+    if (i < attempt) output += "🟨";
+    else if (currState == State.CORRECT && !marked) { output += "🟩"; marked = true; }
+    else if (marked == true) output += "⬛";
+}
+  if (currState == State.FAILED) {
+    output = "🟨🟨🟨🟨🟥";
+  }
+  progressLabel.textContent = output;
+}
+
+
 const fileStr = loadFile("images/");
 const imageStrArr = parseImageArray(fileStr);
 const randomImage = imageStrArr[Math.floor(Math.random() * imageStrArr.length)];
@@ -123,6 +147,8 @@ image.onload = function init() {
   manager.draw(RESOLUTIONS[currResolution]);
 }
 
+
+let gameStateActive = true; // TODO: implement this
 const form = document.querySelector('form');
 form.addEventListener('submit', (event) => {
   event.preventDefault();
@@ -131,13 +157,14 @@ form.addEventListener('submit', (event) => {
   event.target.reset();
   if (userInput == answer) {
     manager.draw(RESOLUTIONS[RESOLUTIONS.length-1]);
-      console.log('yes!');
+    updateProgressLabel(State.CORRECT, currResolution);
   }
   else if (currResolution < RESOLUTIONS.length-1) {
     currResolution += 1;
     manager.draw(RESOLUTIONS[currResolution]);
+    updateProgressLabel(State.WRONG, currResolution);
   }
   else {
-    // fail state
+    updateProgressLabel(State.FAILED, currResolution);
   }
 });
